@@ -3,8 +3,7 @@
 {#  VARIABLES                                                                           #}
 {# ------------------------------------------------------------------------------------ #}
 {%- set km = ctx.knowledgeModel -%}
-{%- set replies = ctx.questionnaireReplies -%}
-{%- set repliesMap = ctx.questionnaireRepliesMap -%}
+{%- set repliesMap = ctx.questionnaireReplies -%}
 {%- set report = ctx.report -%}
 {%- set metricDefinitions = ctx.metrics -%}
 {%- set levelDefinitions = ctx.levels -%}
@@ -80,17 +79,17 @@
   <div class="answer-block answer-simple" id="{{path}}" data-path="{{reply.path}}" data-type="answer">
     <p class="answer">
       <svg aria-hidden="true" data-prefix="fas" data-icon="check" class="svg-inline--fa fa-check fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg>
-      {% if reply.value.type == "StringReply" %}
-        <span>{{reply.value.value}}</span>
+      {% if reply.type == "StringReply" %}
+        <span>{{reply.value}}</span>
       {% else %}
-        <span>{{reply.value.value.value}}</span>
-        {% if reply.value.value.type == "IntegrationValue" and reply.value.value.id %}
+        <span>{{reply.value.value}}</span>
+        {% if reply.value.type == "IntegrationValue" and reply.value.id %}
           {# Integration #}
           {% set integration = km.entities.integrations[question.integrationUuid] %}
           <div class="integration-link">
             {% if integration.logo %}<img src="{{ integration.logo }}" alt="{{ integration.name }}">{% endif %}
-            <a href="{{ integration.itemUrl|replace('${id}', reply.value.value.id) }}">
-              {{ integration.itemUrl|replace("${id}", reply.value.value.id) }}
+            <a href="{{ integration.itemUrl|replace('${id}', reply.value.id) }}">
+              {{ integration.itemUrl|replace("${id}", reply.value.id) }}
             </a>
           </div>
         {% endif %}
@@ -99,8 +98,8 @@
   </div>
 {%- endmacro -%}
 {%- macro renderAnswerOption(question, reply, path, humanIdentifier) -%}
-  {% set hi = question.answerUuids.index(reply.value.value) %}
-  {% set answer = km.entities.answers[reply.value.value] %}
+  {% set hi = question.answerUuids.index(reply.value) %}
+  {% set answer = km.entities.answers[reply.value] %}
   {% set path = path ~ "." ~ answer.uuid %}
   {% set humanIdentifier = humanIdentifier ~ "." ~ hi|of_alphabet %}
   <div class="answer-block answer-option" id="{{path}}" data-path="{{reply.path}}" data-uuid="{{answer.uuid}}" data-type="answer">
@@ -125,10 +124,10 @@
     <h4>Answers</h4>
     {% set itemPathPrefix = path ~ "." %}
     {% set hiPrefix = humanIdentifier ~ "." %}
-    {% for i in range(0, reply.value.value) %}
+    {% for i in reply.value %}
       {% set itemPath = itemPathPrefix ~ i %}
-      {% set itemHumanIdenfifier = hiPrefix ~ i|of_alphabet %}
-      <div class="answer-item" id="{{reply.path}}-{{reply.value.value}}">
+      {% set itemHumanIdenfifier = hiPrefix ~ loop.index|of_alphabet %}
+      <div class="answer-item" id="{{itemPath}}">
         <div class="followups">
           {% for questionUuid in question.itemTemplateQuestionUuids %}
             {% set x = loop.index %}
@@ -165,13 +164,13 @@
   {# Question - Answers #}
   {% set reply = repliesMap[path] %}
   {% if reply %}
-    {% if question.questionType == "ValueQuestion" and reply.value.type == "StringReply" %}
+    {% if question.questionType == "ValueQuestion" and reply.type == "StringReply" %}
       {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
-    {% elif question.questionType == "OptionsQuestion" and reply.value.type == "AnswerReply" %}
+    {% elif question.questionType == "OptionsQuestion" and reply.type == "AnswerReply" %}
       {{ renderAnswerOption(question, reply, path, humanIdentifier) }}
-    {% elif question.questionType == "ListQuestion" and reply.value.type == "ItemListReply" %}
+    {% elif question.questionType == "ListQuestion" and reply.type == "ItemListReply" %}
       {{ renderAnswerList(question, reply, path, humanIdentifier) }}
-    {% elif question.questionType == "IntegrationQuestion" and reply.value.type == "IntegrationReply" %}
+    {% elif question.questionType == "IntegrationQuestion" and reply.type == "IntegrationReply" %}
       {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
     {% endif %}
   {% else %}
