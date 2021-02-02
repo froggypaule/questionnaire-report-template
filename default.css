@@ -234,6 +234,21 @@ footer {
 
 /**************************/
 
+.choices-list {
+  list-style-type: none;
+}
+
+.choices-list .choice {
+  font-style: italic;
+  padding: 0.3em;
+  display: flex;
+  align-items: center;
+}
+
+.choices-list .choice.choice-unselected {
+  color: gray;
+}
+
 .answer-block .answer {
   font-style: italic;
 }
@@ -243,7 +258,8 @@ footer {
 }
 
 .answer-block .answer svg,
-.no-answer svg {
+.no-answer svg,
+.choice svg {
   height: 20px;
   width: 20px;
   margin-right: 0.3rem;

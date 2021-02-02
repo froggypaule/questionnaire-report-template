@@ -4,6 +4,10 @@ This generic *default* template for [Data Stewardship Wizard](https://ds-wizard.
 
 ## Changelog
 
+### 1.2.0
+
+- Added support for Multi-Choice questions (released in DSW 2.11.0)
+
 ### 1.1.0
 
 - Adjusted to template metamodel version 2
