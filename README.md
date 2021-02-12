@@ -4,6 +4,10 @@ This generic *default* template for [Data Stewardship Wizard](https://ds-wizard.
 
 ## Changelog
 
+### 1.2.1
+
+- Fix issue with multiple tags on questions
+
 ### 1.2.0
 
 - Added support for Multi-Choice questions (released in DSW 2.11.0)

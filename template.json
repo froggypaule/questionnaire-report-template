@@ -1,11 +1,9 @@
 {
-  "id": "dsw:questionnaire-report:1.2.0",
   "organizationId": "dsw",
   "templateId": "questionnaire-report",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "name": "Questionnaire Report",
   "description": "Exported questions and answers from a questionnaire",
-  "readme" : "# Questionnaire Report\n\nThis generic *default* template for [Data Stewardship Wizard](https://ds-wizard.org) (DSW) directly transforms answers from a questionnaire into a document while maintaining the structure. It is not tied to any knowledge model and is included by default in every DSW instance.\n\n## Changelog\n\n### 1.1.0\n- Adjusted to template metamodel version 2\n\n### 1.0.0\n\n- Initial version previously distributed as files directly in DSW\n",
   "recommendedPackageId": null,
   "metamodelVersion": 2,
   "license": "Apache-2.0",
