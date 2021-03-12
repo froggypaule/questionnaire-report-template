@@ -81,20 +81,20 @@
 {#  ANSWERS MACROS                                                                      #}
 {# ------------------------------------------------------------------------------------ #}
 {%- macro renderAnswerValue(question, reply, path, humanIdentifier) -%}
-  <div class="answer-block answer-simple" id="{{path}}" data-path="{{reply.path}}" data-type="answer">
+  <div class="answer-block answer-simple" id="{{path}}" data-path="{{path}}" data-type="answer">
     <p class="answer">
       <svg aria-hidden="true" data-prefix="fas" data-icon="check" class="svg-inline--fa fa-check fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg>
-      {% if reply.type == "StringReply" %}
-        <span>{{reply.value}}</span>
-      {% else %}
+      {% if reply.value.type == "StringReply" %}
         <span>{{reply.value.value}}</span>
-        {% if reply.value.type == "IntegrationValue" and reply.value.id %}
+      {% else %}
+        <span>{{reply.value.value.value}}</span>
+        {% if reply.value.value.type == "IntegrationType" and reply.value.value.id %}
           {# Integration #}
           {% set integration = km.entities.integrations[question.integrationUuid] %}
           <div class="integration-link">
             {% if integration.logo %}<img src="{{ integration.logo }}" alt="{{ integration.name }}">{% endif %}
-            <a href="{{ integration.itemUrl|replace('${id}', reply.value.id) }}">
-              {{ integration.itemUrl|replace("${id}", reply.value.id) }}
+            <a href="{{ integration.itemUrl|replace('${id}', reply.value.value.id) }}">
+              {{ integration.itemUrl|replace("${id}", reply.value.value.id) }}
             </a>
           </div>
         {% endif %}
@@ -103,11 +103,12 @@
   </div>
 {%- endmacro -%}
 {%- macro renderAnswerOption(question, reply, path, humanIdentifier) -%}
-  {% set hi = question.answerUuids.index(reply.value) %}
-  {% set answer = km.entities.answers[reply.value] %}
+  {% set replyValue = reply|reply_str_value %}
+  {% set hi = question.answerUuids.index(replyValue) %}
+  {% set answer = km.entities.answers[replyValue] %}
   {% set path = path ~ "." ~ answer.uuid %}
   {% set humanIdentifier = humanIdentifier ~ "." ~ hi|of_alphabet %}
-  <div class="answer-block answer-option" id="{{path}}" data-path="{{reply.path}}" data-uuid="{{answer.uuid}}" data-type="answer">
+  <div class="answer-block answer-option" id="{{path}}" data-path="{{path}}" data-uuid="{{answer.uuid}}" data-type="answer">
     <p class="answer">
       <svg aria-hidden="true" data-prefix="fas" data-icon="check" class="svg-inline--fa fa-check fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg>
       <span>{{ hi|of_alphabet }}. {{answer.label}}</span>
@@ -119,24 +120,28 @@
       {% set hiPrefix = humanIdentifier ~ "." %}
       {% for questionUuid in answer.followUpUuids %}
         {% set x = loop.index %}
-        {{ renderQuestion(km.entities.questions[questionUuid], path, hiPrefix ~ x) }}
+        {% if questionUuid in km.entities.questions.keys() %}
+          {{ renderQuestion(km.entities.questions[questionUuid], path, hiPrefix ~ x) }}
+        {% endif %}
       {% endfor %}
     </div>
   </div>
 {%- endmacro -%}
 {%- macro renderAnswerList(question, reply, path, humanIdentifier) -%}
-  <div class="answer-block answer-items" id="{{path}}" data-path="{{reply.path}}" data-type="answer">
+  <div class="answer-block answer-items" id="{{path}}" data-path="{{path}}" data-type="answer">
     <h4>Answers</h4>
     {% set itemPathPrefix = path ~ "." %}
     {% set hiPrefix = humanIdentifier ~ "." %}
-    {% for i in reply.value %}
+    {% for i in reply|reply_items %}
       {% set itemPath = itemPathPrefix ~ i %}
       {% set itemHumanIdenfifier = hiPrefix ~ loop.index|of_alphabet %}
       <div class="answer-item" id="{{itemPath}}">
         <div class="followups">
           {% for questionUuid in question.itemTemplateQuestionUuids %}
             {% set x = loop.index %}
-            {{ renderQuestion(km.entities.questions[questionUuid], itemPath, itemHumanIdenfifier ~ "." ~ x) }}
+            {% if questionUuid in km.entities.questions.keys() %}
+              {{ renderQuestion(km.entities.questions[questionUuid], itemPath, itemHumanIdenfifier ~ "." ~ x) }}
+            {% endif %}
           {% else %}
             No follow up questions
           {% endfor %}
@@ -148,11 +153,11 @@
   </div>
 {%- endmacro -%}
 {%- macro renderChoiceList(question, reply, path, humanIdentifier) -%}
-  <div class="answer-block answer-items" id="{{path}}" data-path="{{reply.path}}" data-type="answer">
+  <div class="answer-block answer-items" id="{{path}}" data-path="{{path}}" data-type="answer">
     <div class="choices-list">
     {% for choiceUuid in question.choiceUuids %}
       {%- set choice = km.entities.choices[choiceUuid] -%}
-      {%- if choiceUuid in reply.value %}
+      {%- if choiceUuid in reply|reply_items %}
         <div class="choice choice-selected">
           <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="check-square" class="svg-inline--fa fa-check-square fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zm0 400H48V80h352v352zm-35.864-241.724L191.547 361.48c-4.705 4.667-12.303 4.637-16.97-.068l-90.781-91.516c-4.667-4.705-4.637-12.303.069-16.971l22.719-22.536c4.705-4.667 12.303-4.637 16.97.069l59.792 60.277 141.352-140.216c4.705-4.667 12.303-4.637 16.97.068l22.536 22.718c4.667 4.706 4.637 12.304-.068 16.971z"></path></svg>
           {{ choice.label }}
@@ -188,16 +193,16 @@
 {%- macro renderQuestionReply(question, path, humanIdentifier) -%}
   {# Question - Answers #}
   {% set reply = repliesMap[path] %}
-  {% if reply %}
-    {% if question.questionType == "ValueQuestion" and reply.type == "StringReply" %}
+  {% if reply and reply.value %}
+    {% if question.questionType == "ValueQuestion" and reply.value.type == "StringReply" %}
       {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
-    {% elif question.questionType == "OptionsQuestion" and reply.type == "AnswerReply" %}
+    {% elif question.questionType == "OptionsQuestion" and reply.value.type == "AnswerReply" %}
       {{ renderAnswerOption(question, reply, path, humanIdentifier) }}
-    {% elif question.questionType == "ListQuestion" and reply.type == "ItemListReply" %}
+    {% elif question.questionType == "ListQuestion" and reply.value.type == "ItemListReply" %}
       {{ renderAnswerList(question, reply, path, humanIdentifier) }}
-    {% elif question.questionType == "IntegrationQuestion" and reply.type == "IntegrationReply" %}
+    {% elif question.questionType == "IntegrationQuestion" and reply.value.type == "IntegrationReply" %}
       {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
-    {% elif question.questionType == "MultiChoiceQuestion" and reply.type == "MultiChoiceReply" %}
+    {% elif question.questionType == "MultiChoiceQuestion" and reply.value.type == "MultiChoiceReply" %}
       {{ renderChoiceList(question, reply, path, humanIdentifier) }}
     {% endif %}
   {% else %}
@@ -292,7 +297,9 @@
         <section class="questions">
           <h3 class="title">Questions</h3>
           {% for questionUuid in chapter.questionUuids %}
-            {{ renderQuestion(km.entities.questions[questionUuid], chapter.uuid, loop.index) }}
+            {% if questionUuid in km.entities.questions.keys() %}
+              {{ renderQuestion(km.entities.questions[questionUuid], chapter.uuid, loop.index) }}
+            {% endif %}
           {% else %}
             <p class="text-light">No questions</p>
           {% endfor %}
@@ -326,6 +333,12 @@
         <th>Based on</th>
         <td>{{ctx.package.name}}, {{ctx.package.version}} (<span class="package-id"><span class="organization-id">{{ctx.package.organizationId}}</span>:<span class="km-id">{{ctx.package.kmId}}</span>:<span class="version">{{ctx.package.version}}</span></span>)</td>
       </tr>
+      {% for version in ctx.questionnaireVersions if version.uuid == ctx.questionnaireVersion %}
+      <tr>
+        <th>Version</th>
+        <td>{{version.name}} ({{ version.createdAt|datetime_format("%d %b %Y %H:%M:%S") }} UTC)</td>
+      </tr>
+      {% endfor %}
       {% if ctx.config.levelsEnabled %}
       <tr>
         <th>Project Phase</th>

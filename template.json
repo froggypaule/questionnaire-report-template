@@ -1,11 +1,11 @@
 {
   "organizationId": "dsw",
   "templateId": "questionnaire-report",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "name": "Questionnaire Report",
   "description": "Exported questions and answers from a questionnaire",
   "recommendedPackageId": null,
-  "metamodelVersion": 2,
+  "metamodelVersion": 3,
   "license": "Apache-2.0",
   "allowedPackages": [
     {
@@ -165,7 +165,7 @@
     }
   ],
   "_tdk": {
-    "version": "2.10.0",
+    "version": "2.12.0",
     "readmeFile": "README.md",
     "files": [
       "default.css",
