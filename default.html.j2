@@ -5,8 +5,17 @@
 {%- set km = ctx.knowledgeModel -%}
 {%- set repliesMap = ctx.questionnaireReplies -%}
 {%- set report = ctx.report -%}
-{%- set metricDefinitions = ctx.metrics -%}
-{%- set levelDefinitions = ctx.levels -%}
+{# ------------------------------------------------------------------------------------ #}
+{#  PHASES                                                                              #}
+{# ------------------------------------------------------------------------------------ #}
+{%- set phasesMap = dict() -%}
+{%- for phaseUuid in km.phaseUuids -%}
+  {%- do phasesMap.update({phaseUuid: loop.index}) -%}
+{%- endfor -%}
+{%- set currentPhaseIndex = -1 %}
+{%- if ctx.phaseUuid -%}
+  {%- set currentPhaseIndex = phasesMap[ctx.phaseUuid] %}
+{%- endif -%}
 {# ------------------------------------------------------------------------------------ #}
 {#  TAGS, REFERNCES, and EXPERTS MACROS                                                 #}
 {# ------------------------------------------------------------------------------------ #}
@@ -176,7 +185,7 @@
 {#  QUESTION MACROS                                                                     #}
 {# ------------------------------------------------------------------------------------ #}
 {%- macro questionClasses(question) -%}
-  "question {{ "required" if (question.requiredLevel and question.requiredLevel <= ctx.level) else "optional"}} {{  ("phase-" ~ question.requiredLevel) if question.requiredLevel else "phase-none" }}"
+  "question {{ "required" if (question.requiredPhaseUuid and phasesMap[question.requiredPhaseUuid] <= currentPhaseIndex) else "optional"}} {{  ("phase-" ~ phasesMap[question.requiredPhaseUuid]) if question.requiredPhaseUuid else "phase-none" }}"
 {%- endmacro -%}
 {%- macro renderQuestionExtras(question) -%}
   <div class="extra-data">
@@ -244,7 +253,7 @@
             {% if chapterReport.chapterUuid == chapter.uuid %}
               {% for indication in chapterReport.indications %}
                 <tr>
-                  <td>Answered {% if indication.indicationType == "LevelsAnsweredIndication" %}(current phase){% endif %}</td>
+                  <td>Answered {% if indication.indicationType == "PhasesAnsweredIndication" %}(current phase){% endif %}</td>
                   <td>{{indication.answeredQuestions}} / {{indication.answeredQuestions + indication.unansweredQuestions}} </td>
                 </tr>
               {% endfor %}
@@ -266,11 +275,7 @@
                 {% for metric in chapterReport.metrics %}
                   <tr>
                     <td>
-                      {% for metricDefinition in metricDefinitions %}
-                        {% if metric.metricUuid == metricDefinition.uuid %}
-                          {{metricDefinition.title}}
-                        {% endif %}
-                      {% endfor %}
+                      {{km.entities.metrics[metric.metricUuid].title}}
                     </td>
                     <td>{{ metric.measure|round(2) }}</td>
                   </tr>
@@ -339,16 +344,10 @@
         <td>{{version.name}} ({{ version.createdAt|datetime_format("%d %b %Y %H:%M:%S") }} UTC)</td>
       </tr>
       {% endfor %}
-      {% if ctx.config.levelsEnabled %}
+      {% if ctx.phaseUuid %}
       <tr>
         <th>Project Phase</th>
-        <td>
-          {% for levelDefinition in levelDefinitions %}
-            {% if levelDefinition.level == ctx.level %}
-              {{levelDefinition.title}}
-            {% endif %}
-          {% endfor %}
-        </td>
+        <td>{{km.entities.phases[ctx.phaseUuid].title}}</td>
       </tr>
       {% endif %}
       <tr>

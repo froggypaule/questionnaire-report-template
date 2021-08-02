@@ -1,11 +1,11 @@
 {
   "organizationId": "dsw",
   "templateId": "questionnaire-report",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "name": "Questionnaire Report",
   "description": "Exported questions and answers from a questionnaire",
   "recommendedPackageId": null,
-  "metamodelVersion": 3,
+  "metamodelVersion": 4,
   "license": "Apache-2.0",
   "allowedPackages": [
     {
