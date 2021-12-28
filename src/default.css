@@ -66,6 +66,15 @@ header .dmp-data td, header .dmp-data th {
   padding: 0.5rem 0;
 }
 
+header .dmp-data th {
+  min-width: 9em;
+}
+
+header .dmp-data .project-tag {
+  background-color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
 header .tool-info {
   text-align: center;
   margin: 0;
@@ -236,7 +245,8 @@ header .tool-info svg {
   page-break-inside: avoid;
 }
 
-.question .tag {
+.question .tag,
+.dmp-data .tag {
   padding: .125rem 0.5rem;
   color: #fff;
   font-size: 8pt;

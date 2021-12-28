@@ -303,6 +303,18 @@
         <td>{{dc.current_phase.title}}</td>
       </tr>
       {% endif %}
+      {% if dc.qtn.project_tags|length > 0 %}
+      <tr>
+        <th>Project Tags</th>
+        <td class="tags-row">{% for tag in dc.qtn.project_tags %}<span class="tag project-tag">{{ tag }}</span> {% endfor %}</td>
+      </tr>
+      {% endif %}
+      {% if dc.qtn.description %}
+      <tr>
+        <th>Description</th>
+        <td>{{ dc.qtn.description }}</td>
+      </tr>
+      {% endif %}
       <tr>
         <th>Created at</th>
         <td>{{ dc.doc.created_at|datetime_format("%d %b %Y") }}</td>

@@ -269,6 +269,14 @@
         \vspace{0.5cm}
         Project phase: {{dc.current_phase.title}}\\
         {%- endif %}
+        {%- if dc.qtn.project_tags|length > 0 %}
+        \vspace{0.25cm}
+        Project tags: {% for tag in dc.qtn.project_tags %}{{ tag }}{% if not loop.last %}, {% endif %}{% endfor %}\\
+        {%- endif %}
+        {%- if dc.qtn.description %}
+        \vspace{0.25cm}
+        Description: {{ dc.qtn.description }}\\
+        {%- endif %}
             
         \vfill
             

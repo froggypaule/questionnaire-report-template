@@ -162,10 +162,16 @@
 {%- endif %}
 * Based on: **{{ dc.pkg.name }}, {{ dc.pkg.version }}** (`{{ dc.pkg.org_id }}:{{ dc.pkg.km_id }}:{{ dc.pkg.version }}`)
 {%- for version in dc.qtn.versions if version.uuid == dc.qtn.version %}
-* Version: **{{ version.name }}** ({{ version.created_at|datetime_format("%d %b %Y %H:%M:%S") }} UTC)</td>
+* Version: **{{ version.name }}** ({{ version.created_at|datetime_format("%d %b %Y %H:%M:%S") }} UTC)
 {%- endfor %}
 {%- if dc.current_phase %}
 * Project phase: **{{ dc.current_phase.title }}**
+{%- endif %}
+{%- if dc.qtn.project_tags|length > 0 %}
+* Project tags: {% for tag in dc.qtn.project_tags %}**{{ tag }}**{% if not loop.last %}, {% endif %}{% endfor %}
+{%- endif %}
+{%- if dc.qtn.description %}
+* Description: **{{ dc.qtn.description }}**
 {%- endif %}
 * Created at: **{{ dc.doc.created_at|datetime_format("%d %b %Y") }}**
 
