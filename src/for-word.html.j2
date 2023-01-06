@@ -265,11 +265,28 @@
 
   \newpage
 {%- endmacro -%}
+{%- macro renderVersionsOverview() -%}
+  <div>
+    <h2>History of Versions</h2>
+    <p>The named versions of this document:</p>
+    <ul>
+      {% for version in dc.qtn.versions|reverse %}
+        <li>
+          <strong>{{ version.name }}</strong> ({{ version.created_at|datetime_format("%d %b %Y") }})
+          <p>{{ version.description }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{%- endmacro -%}
 {%- macro renderContent() -%}
   <div>
     <div>
       {{ renderReport(dc.report.total_report) }}
     </div>
+    {% if dc.qtn.versions|length > 0 %}
+      {{ renderVersionsOverview() }}
+    {% endif %}
     {% for chapter in dc.km.chapters %}
       \newpage
       {{ renderChapter(chapter, loop.index) }}

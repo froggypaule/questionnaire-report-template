@@ -179,6 +179,16 @@
 
 {{ renderReport(dc.report.total_report) }}
 
+{% if dc.qtn.versions|length > 0 %}
+## History of Versions
+
+The named versions of this document:
+
+{%- for version in dc.qtn.versions|reverse %}
+* **{{ version.name }}** ({{ version.created_at|datetime_format("%d %b %Y") }}): {{ version.description }}
+{%- endfor %}
+{%- endif %}
+
 ---
 
 {% for chapter in dc.km.chapters %}

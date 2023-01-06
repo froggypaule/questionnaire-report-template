@@ -326,10 +326,42 @@
     </p>
   </header>
 {%- endmacro -%}
+{%- macro renderVersionsOverview() -%}
+  <div id="versions">
+    <table>
+      <thead>
+        <tr>
+          <th>Version</th>
+          <th>Date</th>
+          <th>Changes</th>
+        </tr>
+      <thead>
+      <tbody>
+        {% for version in dc.qtn.versions|reverse %}
+          <tr>
+            <td class="version-name">{{ version.name }}</td>
+            <td class="version-date">{{ version.created_at|datetime_format("%d %b %Y") }}</td>
+            <td class="version-changes">{{ version.description }}</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="3" class="no-versions">There are no named versions</tr>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{%- endmacro -%}
 {%- macro renderContent() -%}
   <main>
     <section class="total-report">
+      <h2>Summary Report</h2>
       {{ renderReport(dc.report.total_report) }}
+
+      {% if dc.qtn.versions|length > 0 %}
+      <h2>History of Versions</h2>
+      {{ renderVersionsOverview() }}
+      {% endif %}
     </section>
     {% for chapter in dc.km.chapters %}
       {{ renderChapter(chapter, loop.index) }}

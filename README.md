@@ -4,6 +4,10 @@ This generic *default* template for [Data Stewardship Wizard](https://ds-wizard.
 
 ## Changelog
 
+### Unreleased
+
+- Add versions overview / change tracker table
+
 ### 2.7.1
 
 - Fix Markdown rendering for integration question reply

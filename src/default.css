@@ -98,7 +98,6 @@ header .tool-info svg {
   page-break-after: always;
 }
 
-
 /* Metrics and indications report */
 
 .report {
@@ -374,4 +373,46 @@ header .tool-info svg {
 .metrics > p {
   font-style: italic;
   margin-top: 0;
+}
+
+
+/* Versions */
+div#versions table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+div#versions table,
+div#versions td,
+div#versions th {
+  border: 1px solid #868e96;
+}
+
+div#versions td,
+div#versions th {
+  padding: 0.2em;
+}
+
+div#versions th.title {
+  text-transform: uppercase;
+}
+
+div#versions td.version-name {
+  text-align: center;
+  word-wrap: break-word;
+}
+
+div#versions td.version-date {
+  text-align: center;
+  width: 18ex;
+}
+
+div#versions td.version-changes {
+  word-wrap: break-word;
+}
+
+div#versions td.no-versions {
+  font-style: italic;
+  padding: 1em;
+  text-align: center;
 }

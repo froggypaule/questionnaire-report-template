@@ -195,6 +195,21 @@
   \end{tabular}
 \end{table}
 {%- endmacro -%}
+{%- macro renderVersions() -%}
+{% if dc.qtn.versions|length > 0 %}
+\section*{History of Versions}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{ c c p{0.6\linewidth} }
+		Version & Date & Description \\ \hline\hline\Tstrut
+{%- for version in dc.qtn.versions|reverse %}
+		{{ version.name }}  & {{ version.created_at|datetime_format("%d %b %Y") }} & {{ version.description }} \\ \hline\Tstrut
+{%- endfor %}
+  \end{tabular}
+\end{table}
+{% endif %}
+{%- endmacro -%}
 {#- ------------------------------------------------------------------------------------ -#}
 {#-  INTRODUCTION                                                                        -#}
 {#- ------------------------------------------------------------------------------------ -#}
@@ -238,6 +253,9 @@
 {%- set color = tag.color[1:] if tag.color[0] == "#" else tag.color %}
 \definecolor{{ "{" }}{{color}}{{ "}" }}{HTML}{{ "{" }}{{color}}{{ "}" }}
 {%- endfor %}
+
+% Strut for table
+\newcommand\Tstrut{\rule{0pt}{2.6ex}}
 
 \begin{document}
 
@@ -297,6 +315,8 @@
 \chapter*{Report Summary}
 
 {{ renderReport(dc.report.total_report) }}
+
+{{ renderVersions() }}
 
 {% for chapter in dc.km.chapters %}
 {% set chapterId = loop.index|roman %}
