@@ -2,10 +2,17 @@
 
 This generic *default* template for [Data Stewardship Wizard](https://ds-wizard.org) (DSW) directly transforms answers from a questionnaire into a document while maintaining the structure. It is not tied to any knowledge model and is included by default in every DSW instance.
 
+
+## Issues and Contributing
+
+This document template for DSW is available as open-source via GitHub Repository [ds-wizard/questionnaire-report-template](https://github.com/ds-wizard/questionnaire-report-template), you can [report issues](https://github.com/ds-wizard/questionnaire-report-template/issues) there and fork it for customisations or contributions.
+
+
 ## Changelog
 
-### Unreleased
+### 2.8.0
 
+- Adjusted to template metamodel version 11 (released in DSW 3.20.0)
 - Add versions overview / change tracker table
 
 ### 2.7.1
