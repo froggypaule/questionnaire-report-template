@@ -1,7 +1,7 @@
 {
   "organizationId": "dsw",
   "templateId": "questionnaire-report",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "name": "Questionnaire Report",
   "description": "Exported questions and answers from a questionnaire",
   "metamodelVersion": 11,
@@ -55,10 +55,8 @@
                 }
             }, 
             {
-                "name" : "wkhtmltopdf",
-                "options" : {
-                    "args": "--disable-smart-shrinking -B 20mm -L 20mm -R 20mm -T 25mm"
-                }
+                "name" : "weasyprint",
+                "options" : {}
             }
         ]
     }, 
