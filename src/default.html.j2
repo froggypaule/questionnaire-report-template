@@ -182,21 +182,24 @@
         <strong class="human-identifier">{{humanIdentifier}}</strong>
         {{question.title}}
       </h4>
-      
-      {% if question.tags|length > 0 %}
-      <div class="tags">
-        {% for tag in question.tags %}
-          <span class="tag" style="background-color:{{tag.color}}">{{tag.name}}</span>
-        {% endfor %}
-      </div>
-      {% endif %}
     </div>
 
-    <div class="text">
-      {{question.text|markdown}}
-    </div>
+      {#- we don't want the tags  -#}
+{#-       {% if question.tags|length > 0  %}-#}
+{#-       <div class="tags">-#}
+{#-         {% for tag in question.tags %}-#}
+{#-           <span class="tag" style="background-color:{{tag.color}}">{{tag.name}}</span>-#}
+{#-         {% endfor %}-#}
+{#-       </div>-#}
+{#-       {% endif %}-#}
+   
 
-    {{ renderQuestionExtras(question) }}
+{#- we don't want the accompanying text -#}
+{#-     <div class="text">              -#}
+{#-       {{question.text|markdown}}    -#}
+{#-     </div>                          -#}
+{#-  nor question extras  -#}
+{#-  {{ renderQuestionExtras(question) }}  -#}
 
     {{ renderQuestionReply(question, path, humanIdentifier) }}
   </div>

@@ -1,9 +1,9 @@
 {
-  "organizationId": "dsw",
-  "templateId": "questionnaire-report",
-  "version": "2.9.0",
-  "name": "Questionnaire Report",
-  "description": "Exported questions and answers from a questionnaire",
+  "organizationId": "IFB",
+  "templateId": "ifb-lite-questionnaire-report",
+  "version": "1.0.0",
+  "name": "IFB-lite Questionnaire Report",
+  "description": "Exported questions and answers from a questionnaire (IFB customised)",
   "metamodelVersion": 11,
   "license": "Apache-2.0",
   "allowedPackages": [
@@ -14,104 +14,94 @@
       "maxVersion": null
     }
   ],
-  "formats": [ 
+  "formats": [
     {
-        "uuid" : "d3e98eb6-344d-481f-8e37-6a67b6cd1ad2",
-        "name" : "JSON Data",
-        "icon" : "far fa-file",
-        "steps" : [ 
-            {
-                "name" : "json",
-                "options" : {}
-            }
-        ]
-    }, 
-    {
-        "uuid" : "a9293d08-59a4-4e6b-ae62-7a6a570b031c",
-        "name" : "HTML Document",
-        "icon" : "far fa-file-code",
-        "steps" : [ 
-            {
-                "name" : "jinja",
-                "options" : {
-                    "template" : "src/default.html.j2",
-                    "content-type" : "text/html",
-                    "extension" : "html"
-                }
-            }
-        ]
-    }, 
-    {
-        "uuid" : "68c26e34-5e77-4e15-9bf7-06ff92582257",
-        "name" : "PDF Document",
-        "icon" : "far fa-file-pdf",
-        "steps" : [ 
-            {
-                "name" : "jinja",
-                "options" : {
-                    "template" : "src/default.html.j2",
-                    "content-type" : "text/html",
-                    "extension" : "html"
-                }
-            }, 
-            {
-                "name" : "weasyprint",
-                "options" : {}
-            }
-        ]
-    }, 
-    {
-        "uuid" : "dbc94579-40d7-42c3-975c-71e30d07778b",
-        "name" : "LaTeX Document",
-        "icon" : "far fa-file-alt",
-        "steps" : [ 
-            {
-                "name" : "jinja",
-                "options" : {
-                    "template" : "src/default.tex.j2",
-                    "content-type" : "text/x-tex",
-                    "extension" : "tex"
-                }
-            }
-        ]
-    }, 
-    {
-        "uuid" : "f4bd941a-dfbe-4226-a1fc-200fb5269311",
-        "name" : "MS Word Document",
-        "icon" : "far fa-file-word",
-        "steps" : [ 
-            {
-                "name" : "jinja",
-                "options" : {
-                    "template" : "src/for-word.html.j2",
-                    "content-type" : "text/html",
-                    "extension" : "html"
-                }
-            }, 
-            {
-                "name" : "pandoc",
-                "options" : {
-                    "from" : "html",
-                    "to" : "docx",
-                    "args": "--filter=pandoc-docx-pagebreakpy --reference-doc=src/reference.docx"
-                }
-            }
-        ]
+      "uuid": "b6e6037e-9b7e-4bc9-9ce4-100c774ee0db",
+      "name": "HTML Document, no text, no question extras, no tags",
+      "icon": "far fa-file-code",
+      "steps": [
+        {
+          "name": "jinja",
+          "options": {
+            "template": "src/default.html.j2",
+            "content-type": "text/html",
+            "extension": "html"
+          }
+        }
+      ]
     },
     {
-        "uuid" : "f0533e48-f4c5-4af2-b2c1-5a47d4a247c0",
-        "name" : "Markdown Document",
-        "icon" : "far fa-file-alt",
-        "steps" : [ 
-            {
-                "name" : "jinja",
-                "options" : {
-                    "template" : "src/default.md.j2",
-                    "content-type" : "text/html",
-                    "extension" : "md"
-                }
-            }
-        ]
+      "uuid": "b666f775-ced6-4e68-8bd7-c4ac32019b22",
+      "name": "PDF Document, no text, no question extras, no tags",
+      "icon": "far fa-file-pdf",
+      "steps": [
+        {
+          "name": "jinja",
+          "options": {
+            "template": "src/default.html.j2",
+            "content-type": "text/html",
+            "extension": "html"
+          }
+        },
+        {
+          "name": "weasyprint",
+          "options": {
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "416889d4-7f0d-4d8e-a183-267adb0c4b69",
+      "name": "LaTeX Document, do not use for now",
+      "icon": "far fa-file-alt",
+      "steps": [
+        {
+          "name": "jinja",
+          "options": {
+            "template": "src/default.tex.j2",
+            "content-type": "text/x-tex",
+            "extension": "tex"
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "776aeac2-33f6-4a35-afe5-ddc583302ef7",
+      "name": "MS Word Document, no text, no question extras, no tags",
+      "icon": "far fa-file-word",
+      "steps": [
+        {
+          "name": "jinja",
+          "options": {
+            "template": "src/for-word.html.j2",
+            "content-type": "text/html",
+            "extension": "html"
+          }
+        },
+        {
+          "name": "pandoc",
+          "options": {
+            "from": "html",
+            "to": "docx",
+            "args": "--filter=pandoc-docx-pagebreakpy --reference-doc=src/reference.docx"
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "fdb4bfbd-d3ee-4538-8c3e-2bff30fa4469",
+      "name": "Markdown Document, no text, no question extras, no tags",
+      "icon": "far fa-file-alt",
+      "steps": [
+        {
+          "name": "jinja",
+          "options": {
+            "template": "src/default.md.j2",
+            "content-type": "text/html",
+            "extension": "md"
+          }
+        }
+      ]
     }
   ],
   "_tdk": {

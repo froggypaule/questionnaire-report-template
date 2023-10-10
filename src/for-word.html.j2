@@ -152,14 +152,16 @@
   {% set path = path ~ "." ~ question.uuid %}
   <div>
     <h2>{{humanIdentifier}}. {{question.title}}</h2>
+   
+ {#- we don't want the tags  -#}
+ {#-   {{ renderTags(question) }} -#}
+{#-  nor question extras  -#}
+{#-       {{ renderQuestionExtras(question) }} -#}
 
-    {{ renderTags(question) }}
+{#- we don't want the accompanying text -#}
+{#-       {{ question.text|markdown }} -#} 
 
-    {{ renderQuestionExtras(question) }}
-
-    {{ question.text|markdown }}
-
-    {{ renderQuestionReply(question, path, humanIdentifier) }}
+       {{ renderQuestionReply(question, path, humanIdentifier) }} 
   </div>
 {%- endmacro -%}
 {# ------------------------------------------------------------------------------------ #}

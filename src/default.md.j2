@@ -106,11 +106,15 @@
 {%- macro renderQuestion(question, path, humanIdentifier) -%}
 {%- set path = path ~ "." ~ question.uuid %}
 #### {{humanIdentifier}} {{question.title}}
-{{- renderTags(question) -}}
-{{- renderQuestionExtras(question) -}}
-{%- if question.text %}
-> {{ question.text.replace("\n", "\n> ") }}
-{%- endif %}
+      {#- we don't want the tags  -#}
+{#-   {{- renderTags(question) -}}-#}
+{#-  nor question extras  -#}
+{#-   {{- renderQuestionExtras(question) -}}-#}
+{#- we don't want the accompanying text -#}
+{#-   {%- if question.text %}-#}
+{#-   > {{ question.text.replace("\n", "\n> ") }}-#}
+  {#-   {%- endif %}-#}
+  
 {{ renderQuestionReply(question, path, humanIdentifier) }}
 {%- endmacro -%}
 {#- ------------------------------------------------------------------------------------ -#}

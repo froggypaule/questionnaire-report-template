@@ -42,7 +42,7 @@
 {% if answer.followups|length > 0 -%}
 {%- set hiPrefix = humanIdentifier ~ "." -%}
 {%- for question in answer.followups -%}
-{%- set x = loop.index -%}
+  {%- set x = loop.index -%}
 {{ renderQuestion(question, path, hiPrefix ~ x, False) }}
 {%- endfor -%}
 {%- endif -%}
