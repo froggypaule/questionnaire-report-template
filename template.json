@@ -1,7 +1,7 @@
 {
   "organizationId": "IFB",
   "templateId": "ifb-lite-questionnaire-report",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "IFB-lite Questionnaire Report",
   "description": "Exported questions and answers from a questionnaire (IFB customised)",
   "metamodelVersion": 11,
@@ -17,13 +17,13 @@
   "formats": [
     {
       "uuid": "b6e6037e-9b7e-4bc9-9ce4-100c774ee0db",
-      "name": "HTML Document, no text, no question extras, no tags",
+      "name": "HTML Document, all questions, no text, no question extras, no tags",
       "icon": "far fa-file-code",
       "steps": [
         {
           "name": "jinja",
           "options": {
-            "template": "src/default.html.j2",
+            "template": "src/all_questions/default.html.j2",
             "content-type": "text/html",
             "extension": "html"
           }
@@ -32,13 +32,13 @@
     },
     {
       "uuid": "b666f775-ced6-4e68-8bd7-c4ac32019b22",
-      "name": "PDF Document, no text, no question extras, no tags",
+      "name": "PDF Document, all questions, no text, no question extras, no tags",
       "icon": "far fa-file-pdf",
       "steps": [
         {
           "name": "jinja",
           "options": {
-            "template": "src/default.html.j2",
+            "template": "src/all_questions/default.html.j2",
             "content-type": "text/html",
             "extension": "html"
           }
@@ -51,29 +51,72 @@
       ]
     },
     {
-      "uuid": "416889d4-7f0d-4d8e-a183-267adb0c4b69",
-      "name": "LaTeX Document, do not use for now",
-      "icon": "far fa-file-alt",
-      "steps": [
-        {
-          "name": "jinja",
-          "options": {
-            "template": "src/default.tex.j2",
-            "content-type": "text/x-tex",
-            "extension": "tex"
-          }
-        }
-      ]
-    },
-    {
       "uuid": "776aeac2-33f6-4a35-afe5-ddc583302ef7",
-      "name": "MS Word Document, no text, no question extras, no tags",
+      "name": "MS Word Document, all questions, no text, no question extras, no tags",
       "icon": "far fa-file-word",
       "steps": [
         {
           "name": "jinja",
           "options": {
-            "template": "src/for-word.html.j2",
+            "template": "src/all_questions/for-word.html.j2",
+            "content-type": "text/html",
+            "extension": "html"
+          }
+        },
+        {
+          "name": "pandoc",
+          "options": {
+            "from": "html",
+            "to": "docx",
+            "args": "--standalone --filter=pandoc-docx-pagebreakpy --reference-doc=src/reference.docx"
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "537454c2-dc88-407d-943f-7ed55413fce1",
+      "name": "HTML Document, questions with answers only, no text, no question extras, no tags",
+      "icon": "far fa-file-code",
+      "steps": [
+        {
+          "name": "jinja",
+          "options": {
+            "template": "src/only_replies/default.html.j2",
+            "content-type": "text/html",
+            "extension": "html"
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "5bab08b1-0f37-4e5f-ab5c-870f9f03966a",
+      "name": "PDF Document, questions with answers only, no text, no question extras, no tags",
+      "icon": "far fa-file-pdf",
+      "steps": [
+        {
+          "name": "jinja",
+          "options": {
+            "template": "src/only_replies/default.html.j2",
+            "content-type": "text/html",
+            "extension": "html"
+          }
+        },
+        {
+          "name": "weasyprint",
+          "options": {
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "e7c27ade-7abc-4b5f-ba57-19d770fefa47",
+      "name": "MS Word Document, questions with answers only, no text, no question extras, no tags",
+      "icon": "far fa-file-word",
+      "steps": [
+        {
+          "name": "jinja",
+          "options": {
+            "template": "src/only_replies/for-word.html.j2",
             "content-type": "text/html",
             "extension": "html"
           }
@@ -84,21 +127,6 @@
             "from": "html",
             "to": "docx",
             "args": "--filter=pandoc-docx-pagebreakpy --reference-doc=src/reference.docx"
-          }
-        }
-      ]
-    },
-    {
-      "uuid": "fdb4bfbd-d3ee-4538-8c3e-2bff30fa4469",
-      "name": "Markdown Document, no text, no question extras, no tags",
-      "icon": "far fa-file-alt",
-      "steps": [
-        {
-          "name": "jinja",
-          "options": {
-            "template": "src/default.md.j2",
-            "content-type": "text/html",
-            "extension": "md"
           }
         }
       ]

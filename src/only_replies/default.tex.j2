@@ -1,0 +1,345 @@
+{#- ------------------------------------------------------------------------------------ -#}
+{#-  VARIABLES                                                                           -#}
+{#- ------------------------------------------------------------------------------------ -#}
+{%- set dc = ctx|to_context_obj -%}
+{#- ------------------------------------------------------------------------------------ -#}
+{#-  ANSWERS MACROS                                                                      -#}
+{#- ------------------------------------------------------------------------------------ -#}
+{%- macro renderAnswerValue(question, reply, path, humanIdentifier) %}
+{%- if reply is of_type("StringReply") %}
+\begin{itemize}
+  \item[\CheckmarkBold] {{reply.value}}
+\end{itemize}
+{% else %}
+\begin{itemize}
+  \item[\CheckmarkBold] 
+  \begin{markdown}
+  {{reply.value}}
+  \end{markdown}
+  {% if reply.is_integration -%}
+  {%- set integration = question.integration -%}
+  \href{{ "{" }}{{ integration.item(reply.item_id) }}{{ "}" }}{{ "{" }}({{ integration.name }}: {{ reply.item_id }}){{ "}" }}
+  {% endif %}
+\end{itemize}
+{% endif -%}
+{%- endmacro -%}
+{%- macro renderAnswerOption(question, reply, path, humanIdentifier) -%}
+{%- set hi = question.answers.index(reply.answer) -%}
+{%- set answer = reply.answer -%}
+{%- set path = path ~ "." ~ answer.uuid -%}
+{%- set humanIdentifier = humanIdentifier ~ "." ~ hi|of_alphabet %}
+\begin{itemize}
+  \item[\CheckmarkBold] {{ hi|of_alphabet }}. {{ answer.label }}
+\end{itemize}
+
+{% if answer.advice -%}
+\noindent
+\begin{markdown}
+{{answer.advice}}
+\end{markdown}
+{%- endif %}
+
+{% if answer.followups|length > 0 -%}
+{%- set hiPrefix = humanIdentifier ~ "." -%}
+{%- for question in answer.followups -%}
+  {%- set x = loop.index -%}
+{{ renderQuestion(question, path, hiPrefix ~ x, False) }}
+{%- endfor -%}
+{%- endif -%}
+{%- endmacro -%}
+{%- macro renderAnswerList(question, reply, path, humanIdentifier) -%}
+{%- set itemPathPrefix = path ~ "." -%}
+{%- set hiPrefix = humanIdentifier ~ "." -%}
+\begin{itemize}
+  \item[\ArrowBoldDownRight] Answered with {{reply.items|length}} item{% if reply.items|length > 1 %}s{% endif %} as follows.
+\end{itemize}
+{%- for i in reply.items -%}
+{%- set itemPath = itemPathPrefix ~ i -%}
+{%- set itemHumanIdenfifier = hiPrefix ~ (loop.index - 1)|of_alphabet -%}
+% Answer item: {{itemPath}}
+
+{%- for question in question.followups -%}
+  {%- set x = loop.index -%}
+{{ renderQuestion(question, itemPath, itemHumanIdenfifier ~ "." ~ x, False) }}
+{% else -%}
+  \textit{No follow up questions}
+{% endfor %}
+{% endfor %}
+{%- endmacro -%}
+{%- macro renderChoiceList(question, reply, path, humanIdentifier) -%}
+{%- if question.choices|length > 0 -%}
+\begin{itemize}
+{%- for choice in question.choices -%}
+{%- if choice in reply.choices %}
+  \item[\CheckmarkBold] {{ choice.label }}
+{%- else %}
+  \item[\XSolidBrush] {{ choice.label }}
+{%- endif -%}
+{%- endfor %}
+\end{itemize}
+{%- endif %}
+{%- endmacro -%}
+{#- ------------------------------------------------------------------------------------ -#}
+{#-  QUESTION REPLY MACROS                                                               -#}
+{#- ------------------------------------------------------------------------------------ -#}
+{%- macro renderQuestionReply(question, path, humanIdentifier) -%}
+  {%- set isRequired = question.is_required -%}
+  {%- set reply = question.replies.get(path) -%}
+  {%- if reply and reply.value -%}
+    {%- if question.questionType == "ValueQuestion" and reply.value.type == "StringReply" -%}
+      {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
+    {%- elif question is of_type("OptionsQuestion") and reply is of_type("AnswerReply") -%}
+      {{ renderAnswerOption(question, reply, path, humanIdentifier) }}
+    {%- elif question is of_type("ListQuestion") and reply is of_type("ItemListReply") -%}
+      {{ renderAnswerList(question, reply, path, humanIdentifier) }}
+    {%- elif question is of_type("IntegrationQuestion") and reply is of_type("IntegrationReply") -%}
+      {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
+    {%- elif question is of_type("MultiChoiceQuestion") and reply is of_type("MultiChoiceReply") -%}
+      {{ renderChoiceList(question, reply, path, humanIdentifier) }}
+    {%- endif -%}
+  {% else %}
+\begin{itemize}
+  \item[{% if isRequired %}\textcolor{colorReqQ}{% endif %}\XSolidBrush] \textit{This question has not been answered yet!}
+\end{itemize}
+  {% endif -%}
+{%- endmacro -%}
+{#- ------------------------------------------------------------------------------------ -#}
+{#-  QUESTION EXTRAS MACRO                                                               -#}
+{#- ------------------------------------------------------------------------------------ -#}
+{%- macro renderQuestionExtras(question) -%}
+  {%- set resourcePageReferences = question.resource_page_reference -%}
+  {%- set urlReferences = question.url_references -%}
+  {%- set tags = question.tags -%}
+  {%- set experts = question.experts -%}
+  {%- if resourcePageReferences|length > 0 or urlReferences|length > 0 or tags|length > 0 or experts|length > 0 %}
+\begin{itemize}
+  {%- if tags|length > 0 %}
+  \item \textit{Tags}: {% for tag in tags %}{% set color = tag.color[1:] if tag.color[0] == "#" else tag.color %}\setulcolor{{ "{" }}{{color}}{{ "}" }}\ul{{ "{" }}{{tag.name}}{{ "}" }}{% if not loop.last%}, {% endif %}{% endfor %}
+  {% endif %}
+  {%- if resourcePageReferences|length > 0 %}
+  \item \textit{Data Stewardship for Open Science}: {% for reference in resourcePageReferences -%}
+    \href{{ "{" }}{{ reference.url }}{{ "}" }}{{ "{" }}{{ reference.short_uuid }}{{ "}" }}
+    {%- if not loop.last -%}, {% endif -%}{%- endfor -%}
+  {%- endif -%}
+  {%- if urlReferences|length > 0 %}
+  \item \textit{External Links}: {% for reference in urlReferences -%}
+    \href{{ "{" }}{{ reference.url }}{{ "}" }}{{ "{" }}{{ reference.label }}{{ "}" }}
+    {%- if not loop.last -%}, {% endif -%}{%- endfor -%}
+  {%- endif -%}
+  {% if question.expertUuids|length > 0 %}
+  \item \textit{Experts}: {% for expert in experts -%}
+    {{expert.name}} $\langle$\href{{ "{" }}mailto:{{ expert.email }}{{ "}" }}{{ "{" }}{{ expert.email }}{{ "}" }}$\rangle$
+    {%- if not loop.last -%}, {% endif -%}{%- endfor -%}
+  {%- endif -%}
+\end{itemize}
+  {%- endif -%}
+{%- endmacro -%}
+{#- ------------------------------------------------------------------------------------ -#}
+{#-  QUESTION MACROS                                                                     -#}
+{#- ------------------------------------------------------------------------------------ -#}
+{%- macro renderQuestion(question, path, humanIdentifier, topLevel) -%}
+{%- set path = path ~ "." ~ question.uuid -%}
+{% if topLevel %}
+\section*{{ "{" }}\protect\textcolor{colorSecId}{{ "{" }}{{humanIdentifier}}{{ "}" }} {{question.title}}{{ "}" }}
+{% else %}
+\subsection*{{ "{" }}\protect\textcolor{colorSecId}{{ "{" }}{{humanIdentifier}}{{ "}" }} {{question.title}}{{ "}" }}
+{% endif %}
+\label{{ "{" }}{{path}}{{ "}" }}
+% uuid: {{question.uuid}}
+% path: {{path}}
+
+{{ renderQuestionExtras(question) }}
+
+{% if question.text %}
+\noindent
+\begin{markdown}
+{{question.text}}
+\end{markdown}
+{% endif %}
+
+{{ renderQuestionReply(question, path, humanIdentifier) }}
+
+{%- endmacro -%}
+{#- ------------------------------------------------------------------------------------ -#}
+{#-  REPORT MACROS                                                                       -#}
+{#- ------------------------------------------------------------------------------------ -#}
+{%- macro progresBar(value) -%}
+{%- set color = "colorBarAwful" -%}
+{%- if value > 0.95 -%}
+  {%- set color = "colorBarAwesome" -%}
+{%- elif value > 0.8 -%}
+  {%- set color = "colorBarNice" -%}
+{%- elif value > 0.6 -%}
+  {%- set color = "colorBarGood" -%}
+{%- elif value > 0.4 -%}
+  {%- set color = "colorBarAverage" -%}
+{%- elif value > 0.2 -%}
+  {%- set color = "colorBarBad" -%}
+{%- endif -%}
+\progressbar[subdivisions=10,width=15em,heighta=10pt,filledcolor={{color}}]{{ "{" }}{{value}}{{ "}" }}
+{%- endmacro -%}
+{%- macro renderReport(report) -%}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{ l c r }
+{%- for item in report.indications %}
+    Answered {% if item.is_for_phase %}(current phase){% endif %} & {{item.answered}} / {{item.total}} & {{ progresBar(item.percentage) }} \\
+{%- endfor %}
+    & & \\ \hline
+    & & \\
+{%- if report.metrics|length > 0 %}
+{%- for item in report.metrics %}
+    {{item.metric.title}} & {{ "%.2f"|format(item.measure) }} & {{ progresBar(item.measure) }} \\
+{%- endfor -%}
+{%- endif %}
+  \end{tabular}
+\end{table}
+{%- endmacro -%}
+{%- macro renderVersions() -%}
+{% if dc.qtn.versions|length > 0 %}
+\section*{History of Versions}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{ c c p{0.6\linewidth} }
+		Version & Date & Description \\ \hline\hline\Tstrut
+{%- for version in dc.qtn.versions|reverse %}
+		{{ version.name }}  & {{ version.created_at|datetime_format("%d %b %Y") }} & {{ version.description }} \\ \hline\Tstrut
+{%- endfor %}
+  \end{tabular}
+\end{table}
+{% endif %}
+{%- endmacro -%}
+{#- ------------------------------------------------------------------------------------ -#}
+{#-  INTRODUCTION                                                                        -#}
+{#- ------------------------------------------------------------------------------------ -#}
+\documentclass[a4paper,12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage{geometry}
+\geometry{
+	a4paper,
+	left=20mm,
+	top=20mm,
+	bottom=20mm,
+	right=20mm,
+}
+
+\usepackage{bbding}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{hyperref}
+\usepackage[hashEnumerators,smartEllipses]{markdown}
+\usepackage{progressbar}
+
+\renewcommand{\thechapter}{\Roman{chapter}}
+
+\setul{0.3ex}{0.3ex}
+
+% Custom colors
+\definecolor{colorSecId}{HTML}{0060c7}
+\definecolor{colorReqQ}{HTML}{FF0000}
+% Progress bar colors
+\definecolor{colorBarAwful}{HTML}{DC3545}
+\definecolor{colorBarBad}{HTML}{EA6D2C}
+\definecolor{colorBarAverage}{HTML}{D4BC13}
+\definecolor{colorBarGood}{HTML}{A9B720}
+\definecolor{colorBarNice}{HTML}{7EB12C}
+\definecolor{colorBarAwesome}{HTML}{28A745}
+% Colors for tags (underline)
+{%- for tag in dc.km.tags -%}
+{%- set color = tag.color[1:] if tag.color[0] == "#" else tag.color %}
+\definecolor{{ "{" }}{{color}}{{ "}" }}{HTML}{{ "{" }}{{color}}{{ "}" }}
+{%- endfor %}
+
+% Strut for table
+\newcommand\Tstrut{\rule{0pt}{2.6ex}}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+            
+        \Huge
+        \textbf{{ "{" }}{{dc.qtn.name}}{{ "}" }}
+            
+        \vspace{0.5cm}
+        \LARGE
+        Questionnaire Report 
+            
+        \vspace{1.5cm}
+            
+{%- if dc.qtn.created_by %}
+        \Large
+        \textbf{{ "{" }}{{dc.qtn.created_by.first_name}} {{dc.qtn.created_by.last_name}}{{ "}" }}\\
+        {{dc.qtn.created_by.email}}
+{%- endif %}
+        \vspace{1.5cm}
+
+        \normalsize
+        Based on\\
+        {{dc.pkg.name}}, {{dc.pkg.version}}\\
+        \texttt{{"{"}}{{dc.pkg.org_id}}:{{dc.pkg.km_id}}:{{dc.pkg.version}}{{"}"}}\\
+        {%- for version in dc.qtn.versions if version.uuid == dc.qtn.version %}
+        \vspace{0.5cm}
+        Version: {{ version.name }} ({{ version.created_at|datetime_format("%d %b %Y %H:%M:%S") }} UTC)\\
+        {%- endfor %}
+        {%- if dc.current_phase %}
+        \vspace{0.5cm}
+        Project phase: {{dc.current_phase.title}}\\
+        {%- endif %}
+        {%- if dc.qtn.project_tags|length > 0 %}
+        \vspace{0.25cm}
+        Project tags: {% for tag in dc.qtn.project_tags %}{{ tag }}{% if not loop.last %}, {% endif %}{% endfor %}\\
+        {%- endif %}
+        {%- if dc.qtn.description %}
+        \vspace{0.25cm}
+        Description: {{ dc.qtn.description }}\\
+        {%- endif %}
+            
+        \vfill
+            
+        \Large
+        {{ "{" }}{{ dc.doc.created_at|datetime_format("%d %b %Y") }}{{ "}" }}
+            
+        \vspace{0.8cm}
+        
+        \normalsize
+        Document generated by \href{https://ds-wizard.org}{Data Stewardship Wizard}
+    \end{center}
+\end{titlepage}
+
+\chapter*{Report Summary}
+
+{{ renderReport(dc.report.total_report) }}
+
+{{ renderVersions() }}
+
+{% for chapter in dc.km.chapters %}
+{% set chapterId = loop.index|roman %}
+\chapter{{ "{" }}{{chapter.title}}{{ "}" }}
+\label{{ "{" }}{{chapter.uuid}}{{ "}" }}
+% uuid: {{chapter.uuid}}
+% path: {{chapter.uuid}}
+
+{%- if chapter.text %}
+\begin{markdown}
+{{chapter.text}}
+\end{markdown}
+{%- endif %}
+
+{% for chapterReport in chapter.reports %}
+\section*{Chapter Summary}
+{{ renderReport(chapterReport) }}
+{% endfor %}
+
+{% for question in chapter.questions %}
+{{ renderQuestion(question, chapter.uuid, chapterId ~ "." ~ loop.index, True) }}
+{% endfor %}
+
+{% endfor %}
+
+\end{document}

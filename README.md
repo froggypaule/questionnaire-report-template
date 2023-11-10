@@ -19,6 +19,8 @@ This document template for DSW is available as open-source via GitHub Repository
 
 ## Changelog
 
+### 1.0.1
+
 ### 1.0.0
 
 1rst version: without question.text, tags, question.extras

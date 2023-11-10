@@ -247,11 +247,11 @@ header .tool-info svg {
 /* Question */
 
 .question:not(:last-child) {
-  padding-bottom: 3rem;
+/*    padding-bottom: 3rem; */
 }
 
 .answer-item:not(:last-child) {
-  margin-bottom: 3rem;
+/*  margin-bottom: 3rem; */
 }
 
 .question, .answer-item {
@@ -260,7 +260,7 @@ header .tool-info svg {
 }
 
 .followups {
-  margin-top: 2rem;
+/*  margin-top: 2rem;*/
 }
 
 .answer-item > .followups > .question, .questions > .question {
@@ -270,16 +270,16 @@ header .tool-info svg {
 
 .question-header h4 {
   margin-top: 0;
-  margin-bottom: 0.5rem;
+/*  margin-bottom: 0.5rem; */
   font-weight: bold;
   background: #eee;
-  padding: 1rem;
+/*  padding: 1rem; */
   border-radius: 0.5rem;
 }
 
 .question .title .human-identifier {
-  display: block;
-  margin-bottom: 0.25rem;
+ /* display: block;*/
+ /*   margin-bottom: 0.25rem; */
   font-size: 8pt;
 }
 
