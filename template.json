@@ -1,9 +1,9 @@
 {
   "organizationId": "IFB",
   "templateId": "ifb-lite-questionnaire-report",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "name": "IFB-lite Questionnaire Report",
-  "description": "Exported questions and answers from a questionnaire (IFB customised)",
+  "description": "Exported questions and answers from a questionnaire, IFB customised: , no text, no question extras, no tags ... so that the resulting document/DMP is as concise as possible and fit to hand in to funders or other parties",
   "metamodelVersion": 11,
   "license": "Apache-2.0",
   "allowedPackages": [
@@ -17,7 +17,7 @@
   "formats": [
     {
       "uuid": "b6e6037e-9b7e-4bc9-9ce4-100c774ee0db",
-      "name": "HTML Document, all questions, no text, no question extras, no tags",
+      "name": "HTML Document, all questions",
       "icon": "far fa-file-code",
       "steps": [
         {
@@ -31,8 +31,8 @@
       ]
     },
     {
-      "uuid": "b666f775-ced6-4e68-8bd7-c4ac32019b22",
-      "name": "PDF Document, all questions, no text, no question extras, no tags",
+      "uuid": "16a8178a-1c36-474b-bc2e-f3c87d70b8da",
+      "name": "PDF Document, all questions",
       "icon": "far fa-file-pdf",
       "steps": [
         {
@@ -51,8 +51,8 @@
       ]
     },
     {
-      "uuid": "776aeac2-33f6-4a35-afe5-ddc583302ef7",
-      "name": "MS Word Document, all questions, no text, no question extras, no tags",
+      "uuid": "8135b82c-233f-4d1f-be88-30db99573c3e",
+      "name": "MS Word Document, all questions",
       "icon": "far fa-file-word",
       "steps": [
         {
@@ -68,14 +68,14 @@
           "options": {
             "from": "html",
             "to": "docx",
-            "args": "--standalone --filter=pandoc-docx-pagebreakpy --reference-doc=src/reference.docx"
+            "args": "--filter=pandoc-docx-pagebreakpy --reference-doc=src/reference.docx"
           }
         }
       ]
     },
     {
       "uuid": "537454c2-dc88-407d-943f-7ed55413fce1",
-      "name": "HTML Document, questions with answers only, no text, no question extras, no tags",
+      "name": "HTML Document, questions with answers only",
       "icon": "far fa-file-code",
       "steps": [
         {
@@ -90,7 +90,7 @@
     },
     {
       "uuid": "5bab08b1-0f37-4e5f-ab5c-870f9f03966a",
-      "name": "PDF Document, questions with answers only, no text, no question extras, no tags",
+      "name": "PDF Document, questions with answers only",
       "icon": "far fa-file-pdf",
       "steps": [
         {
@@ -110,7 +110,7 @@
     },
     {
       "uuid": "e7c27ade-7abc-4b5f-ba57-19d770fefa47",
-      "name": "MS Word Document, questions with answers only, no text, no question extras, no tags",
+      "name": "MS Word Document, questions with answers only",
       "icon": "far fa-file-word",
       "steps": [
         {
