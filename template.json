@@ -1,10 +1,10 @@
 {
   "organizationId": "IFB",
   "templateId": "ifb-lite-questionnaire-report",
-  "version": "1.1.0",
+  "version": "1.1.3",
   "name": "IFB-lite Questionnaire Report",
   "description": "Exported questions and answers from a questionnaire, IFB customised: , no text, no question extras, no tags ... so that the resulting document/DMP is as concise as possible and fit to hand in to funders or other parties",
-  "metamodelVersion": 11,
+  "metamodelVersion": 12,
   "license": "Apache-2.0",
   "allowedPackages": [
     {

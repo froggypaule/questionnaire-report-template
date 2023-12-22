@@ -19,7 +19,11 @@ This document template for DSW is available as open-source via GitHub Repository
 
 ## Changelog
 
-### 1.0.1
+### 1.1.3
+
+### 1.1.2
+    
+- update to metamodelVersion 12
 
 ### 1.0.0
 
