@@ -1,10 +1,10 @@
 {
   "organizationId": "IFB",
   "templateId": "ifb-lite-questionnaire-report",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "name": "IFB-lite Questionnaire Report",
   "description": "Exported questions and answers from a questionnaire, IFB customised: , no text, no question extras, no tags ... so that the resulting document/DMP is as concise as possible and fit to hand in to funders or other parties",
-  "metamodelVersion": 12,
+  "metamodelVersion": 13,
   "license": "Apache-2.0",
   "allowedPackages": [
     {
@@ -39,6 +39,26 @@
           "name": "jinja",
           "options": {
             "template": "src/all_questions/default.html.j2",
+            "content-type": "text/html",
+            "extension": "html"
+          }
+        },
+        {
+          "name": "weasyprint",
+          "options": {
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "d3bf55f9-1c55-448a-ad7f-5efb2c366a24",
+      "name": "PDF Document, all questions but without answers",
+      "icon": "far fa-file-code",
+      "steps": [
+        {
+          "name": "jinja",
+          "options": {
+            "template": "src/all_questions/all_questions_no_answers.html.j2",
             "content-type": "text/html",
             "extension": "html"
           }

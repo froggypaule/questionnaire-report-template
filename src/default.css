@@ -254,7 +254,7 @@ header .tool-info svg {
 /*  margin-bottom: 3rem; */
 }
 
-.question, .answer-item {
+.answer-item {
   border-left: 5px solid #eee;
   padding-left: 1rem
 }
@@ -263,11 +263,11 @@ header .tool-info svg {
 /*  margin-top: 2rem;*/
 }
 
-.answer-item > .followups > .question, .questions > .question {
+/*.answer-item > .followups > .question, .questions > .question, .answer-item > .followups > .answer-item {
   border: none;
-  padding-left: 0;
+  padding-left: 0rem;
 }
-
+*/
 .question-header h4 {
   margin-top: 0;
 /*  margin-bottom: 0.5rem; */
