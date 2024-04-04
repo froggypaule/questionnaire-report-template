@@ -19,6 +19,13 @@ This document template for DSW is available as open-source via GitHub Repository
 
 ## Changelog
 
+### 1.1.5
+
+### 1.1.4
+
+- fixed the all questions, no answers output (HTML & PDF)
+
+
 ### 1.1.3
 
 - update to metamodelVersion 13

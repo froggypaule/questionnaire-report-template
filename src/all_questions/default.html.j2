@@ -94,32 +94,37 @@
       
     {% set itemPathPrefix = path ~ "." %}
     {% set hiPrefix = humanIdentifier ~ "." %}
-    {% for i in reply.items %}
+
+    {%- if nb_items and nb_items > 1 -%}
+      {%- for i in reply.items -%}
+
       {% set itemPath = itemPathPrefix ~ i %}
-      {% if nb_items > 1 %}
         <h4>---</h4>
         {% set itemHumanIdenfifier = (loop.index - 1)|of_alphabet %}
-      {% else %}
-        {% set itemHumanIdenfifier = "" %}
-      {% endif %}
+        
+        {#     {% set itemHumanIdenfifier = hiPrefix ~ (loop.index - 1)|of_alphabet %} #}
+        <div class="answer-item" id="{{itemPath}}">
+          <div class="followups">
+            {% for question in question.followups %}
+              {% set x = loop.index %}
+              {{ renderQuestion(question, itemPath, itemHumanIdenfifier ~ "." ~ x) }}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    {%- else -%}
+      {% set itemPath = itemPathPrefix ~ 0 %}
+      {% set itemHumanIdenfifier = "" %}
       {#     {% set itemHumanIdenfifier = hiPrefix ~ (loop.index - 1)|of_alphabet %} #}
       <div class="answer-item" id="{{itemPath}}">
         <div class="followups">
           {% for question in question.followups %}
             {% set x = loop.index %}
-            {% if itemHumanIdenfifier == "" %}
-              {{ renderQuestion(question, itemPath, x) }}
-            {% else %}
-              {{ renderQuestion(question, itemPath, itemHumanIdenfifier ~ "." ~ x) }}
-            {% endif %}
-          {% else %}
-            No follow up questions
+            {{ renderQuestion(question, itemPath, x) }}
           {% endfor %}
         </div>
       </div>
-    {% else %}
-      No answer items
-    {% endfor %}
+    {%- endif -%}
   </div>
 {%- endmacro -%}
 {%- macro renderChoiceList(question, reply, path, humanIdentifier) -%}
