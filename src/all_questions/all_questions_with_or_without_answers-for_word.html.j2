@@ -7,83 +7,116 @@
 {#  ANSWERS MACROS                                                                      #}
 {# ------------------------------------------------------------------------------------ #}
 {%- macro renderAnswerValue(question, reply, path, humanIdentifier) -%}
-  <div>
-    <p>
-      ✔️
-      {% if reply is of_type("StringReply") %}
-        <span>{{reply.value}}</span>
-      {% else %}
-        <span>{{reply.value|markdown}}</span>
-        {% if reply.is_integration %}
-          {# Integration #}
-          {% set integration = question.integration %}
-          <span>
-            ({{ integration.name }}: <a href="{{ integration.item(reply.item_id) }}">{{ reply.item_id }}</a>)
-          </span>
+  {% if reply %}
+    <div>
+      <p>
+        ✔️
+        {% if reply is of_type("StringReply") %}
+          <span>{{reply.value}}</span>
+        {% else %}
+          <span>{{reply.value|markdown}}</span>
+          {% if reply.is_integration %}
+            {# Integration #}
+            {% set integration = question.integration %}
+            <span>
+              ({{ integration.name }}: <a href="{{ integration.item(reply.item_id) }}">{{ reply.item_id }}</a>)
+            </span>
+          {% endif %}
         {% endif %}
-      {% endif %}
-    </p>
-  </div>
+      </p>
+    </div>
+  {% endif %}
 {%- endmacro -%}
+
 {%- macro renderAnswerOption(question, reply, path, humanIdentifier) -%}
-  {% set hi = question.answers.index(reply.answer) %}
-  {% set answer = reply.answer %}
-  {% set path = path ~ "." ~ answer.uuid %}
-  {% set humanIdentifier = humanIdentifier ~ "." ~ hi|of_alphabet %}
+
+  {%- if reply -%}
+    {%- set answer = reply.answer -%}
+  {%- else -%}
+    {%- set answer = none  -%}
+  {%- endif -%}
+
+  {% for option in question.answers %}
+    {% if reply and option.label == answer.label %}
+      {% set hi = question.answers.index(reply.answer) %}
+      {% set path = path ~ "." ~ answer.uuid %}
+      {% set humanIdentifier = humanIdentifier ~ "." ~ hi|of_alphabet %}
+     <div>
+        <p>
+          ✔️ <span>{{answer.label}}</span>
+        </p>
+      {% else %}
+        {% set hi = 0 %}
+        {% set path = path ~ "." ~ option.uuid %}
+        {% set humanIdentifier = humanIdentifier ~ "." ~ hi|of_alphabet %}
+       <div>
+          <p>
+            ❌ <span>{{option.label}}</span>
+          </p>
+        {% endif %}
+
+        {% if option.followups|length > 0 %}
+          <div>
+            {% set hiPrefix = humanIdentifier ~ "." %}
+            {% for question in option.followups %}
+              {% set x = loop.index %}
+              {{ renderQuestion(question, path, hiPrefix ~ x) }}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+
+        </div>
+      {% endfor %}
+    {%- endmacro -%}
+
+
+{%- macro renderAnswerList(question, reply, path, humanIdentifier) -%}
+
+  {%- set nb_items = 0 %}
+  {% if reply %}
+    {%- set nb_items = reply.items|length -%}
+  {% endif %}
+
   <div>
-    <p>
-      ✔️ <span>{{answer.label}}</span>
-    </p>
-    {% if answer.followups|length > 0 %}
-      <div>
-        {% set hiPrefix = humanIdentifier ~ "." %}
-        {% for question in answer.followups %}
-          {% set x = loop.index %}
-          {{ renderQuestion(question, path, hiPrefix ~ x) }}
-        {% endfor %}
+
+    {% set itemPathPrefix = path ~ "." %}
+    {% set hiPrefix = humanIdentifier ~ "." %}
+
+    {%- if nb_items > 1 -%}
+      {% for i in reply.items %}
+
+        {% set itemPath = itemPathPrefix ~ i %}
+        {% set itemHumanIdentifier = (loop.index - 1)|of_alphabet %}
+        <div class="answer-item" id="{{itemPath}}">
+          <div class="followups">
+            {% for question in question.followups %}
+              {% set x = loop.index %}
+              {{ renderQuestion(question, itemPath, itemHumanIdentifier ~ "." ~ x) }}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+     {% else %}
+       {% set itemPath = itemPathPrefix ~ 0 %}
+       {% set itemHumanIdentifier = (0)|of_alphabet %}
+       <div class="answer-item" id="{{itemPath}}">
+         <div class="followups">
+           {% for question in question.followups %}
+             {% set x = loop.index %}
+             {{ renderQuestion(question, itemPath, itemHumanIdentifier ~ "." ~ x) }}
+           {% endfor %}
+         </div>
       </div>
     {% endif %}
   </div>
 {%- endmacro -%}
-{%- macro renderAnswerList(question, reply, path, humanIdentifier) -%}
-  <div>
-    {%- set nb_items = reply.items|length -%}
-    {% set itemPathPrefix = path ~ "." %}
-    {% set hiPrefix = humanIdentifier ~ "." %}
-    {% for i in reply.items %}
-      {% set itemPath = itemPathPrefix ~ i %}
-      {% if nb_items > 1 %}
-        {% set itemHumanIdentifier = hiPrefix ~ (loop.index - 1)|of_alphabet %}
-        <h2>{{itemHumanIdentifier ~ ". " ~ question.title}}</h2>
-        {% set itemHumanIdentifier = (loop.index - 1)|of_alphabet %}
-      {% else %}
-        <h2>{{humanIdentifier}}. {{question.title}}</h2>
-        {% set itemHumanIdentifier = "" %}
-      {% endif %}
-      <div class="answer-item" id="{{itemPath}}">
-        <div class="followups">
-          {% for question in question.followups %}
-            {% set x = loop.index %}
-            {% if itemHumanIdentifier == "" %}
-              {{ renderQuestion(question, itemPath, x) }}
-            {% else %}
-              {{ renderQuestion(question, itemPath, itemHumanIdentifier ~ "." ~ x) }}
-            {% endif %}
-          {% else %}
-            <i>No follow up questions</i>
-          {% endfor %}
-        </div>
-      </div>
-    {% else %}
-      <i>No answer items</i>
-    {% endfor %}
-  </div>
-{%- endmacro -%}
+
 {%- macro renderChoiceList(question, reply, path, humanIdentifier) -%}
   <div>
     <ul>
     {% for choice in question.choices %}
-      {%- if choice in reply.choices %}
+      {%- if reply and choice in reply.choices %}
         <li>✔️ {{ choice.label }}</li>
       {%- else %}
         <li>❌ {{ choice.label }}</li>
@@ -98,35 +131,27 @@
 {%- macro renderQuestionReply(question, path, humanIdentifier) -%}
   {# Question - Answers #}
   {% set reply = question.replies.get(path) %}
-  {% if reply and reply.value %}
-    {% if question is of_type("ValueQuestion") and reply is of_type("StringReply") %}
-      {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
-    {% elif question is of_type("OptionsQuestion") and reply is of_type("AnswerReply") %}
-      {{ renderAnswerOption(question, reply, path, humanIdentifier) }}
-    {% elif question is of_type("ListQuestion") and reply is of_type("ItemListReply") %}
-      {{ renderAnswerList(question, reply, path, humanIdentifier) }}
-    {% elif question is of_type("IntegrationQuestion") and reply is of_type("IntegrationReply") %}
-      {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
-    {% elif question is of_type("MultiChoiceQuestion") and reply is of_type("MultiChoiceReply") %}
-      {{ renderChoiceList(question, reply, path, humanIdentifier) }}
-    {% endif %}
-  {% else %}
-    <p>❗ <i>This question has not been answered yet!</i></p>
+  {% if question is of_type("ValueQuestion") %}
+    {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
+  {% elif question is of_type("OptionsQuestion") %}
+    {{ renderAnswerOption(question, reply, path, humanIdentifier) }}
+  {% elif question is of_type("ListQuestion") %}
+    {{ renderAnswerList(question, reply, path, humanIdentifier) }}
+  {% elif question is of_type("IntegrationQuestion")  %}
+    {{ renderAnswerValue(question, reply, path, humanIdentifier) }}
+  {% elif question is of_type("MultiChoiceQuestion") %}
+    {{ renderChoiceList(question, reply, path, humanIdentifier) }}
   {% endif %}
 {%- endmacro -%}
+
+
 {%- macro renderQuestion(question, path, humanIdentifier) -%}
   {% set path = path ~ "." ~ question.uuid %}
   {% set reply = question.replies.get(path) %}
 
   <div>
-    {% if question is of_type("ListQuestion") and reply and reply.value %}
-      {# in all these cases, question title is handled in renderQuestionReply #}
-  {% else %}
-   
     <h2>{{humanIdentifier}}. {{question.title}}</h2>
-  {%- endif %}
-
-  {{ renderQuestionReply(question, path, humanIdentifier) }} 
+    {{ renderQuestionReply(question, path, humanIdentifier) }} 
   </div>
 
 {%- endmacro -%}

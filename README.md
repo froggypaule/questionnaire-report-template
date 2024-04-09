@@ -16,10 +16,20 @@ Both templates are generic templates.
 
 This document template for DSW is available as open-source via GitHub Repository [ds-wizard/questionnaire-report-template](https://github.com/ds-wizard/questionnaire-report-template), you can [report issues](https://github.com/ds-wizard/questionnaire-report-template/issues) there and fork it for customisations or contributions.
 
-
 ## Changelog
 
-### 1.1.5
+### 1.1.8
+
+
+
+### 1.1.7
+
+- fixed the all questions, no answers output (docx)
+- only answers output is ok (HTML, PDF, docx)
+
+### 1.1.5, 1.1.6
+
+- fixed the all questions, with or without output (HTML, PDF, docx)
 
 ### 1.1.4
 
